@@ -17,24 +17,23 @@ export const goodsFromServer: string[] = [
   'Garlic',
 ];
 enum SortType {
-  Defoult = 'Defoult',
+  Default = 'Default',
   Alphabet = 'Alphabet',
-  Reverse = 'Reverse',
   Length = 'Length',
 }
 
 function getPreparedGoods(
   goods: string[],
   sortField: SortType,
-  handleReverse: boolean,
+  isReversed: boolean,
 ): string[] {
-  let prepearedGoods = goods.slice();
+  let preparedGoods = goods.slice();
 
   if (sortField) {
-    if (sortField === 'Alphabet') {
-      prepearedGoods.sort((good1, good2) => good1.localeCompare(good2));
-    } else if (sortField === 'Length') {
-      const decoratedGoods = prepearedGoods.map((value, index) => ({
+    if (sortField === SortType.Alphabet) {
+      preparedGoods.sort((good1, good2) => good1.localeCompare(good2));
+    } else if (sortField === SortType.Length) {
+      const decoratedGoods = preparedGoods.map((value, index) => ({
         value,
         index,
       }));
@@ -49,31 +48,31 @@ function getPreparedGoods(
         return a.index - b.index;
       });
 
-      prepearedGoods = decoratedGoods.map(item => item.value);
+      preparedGoods = decoratedGoods.map(item => item.value);
     }
   }
 
-  if (handleReverse) {
-    prepearedGoods.reverse();
+  if (isReversed) {
+    preparedGoods.reverse();
   }
 
-  return prepearedGoods;
+  return preparedGoods;
 }
 
 export const App: React.FC = () => {
-  const [sortField, setSortField] = useState<SortType>(SortType.Defoult);
-  const [handleReverse, setIsReverse] = useState<boolean>(false);
+  const [sortField, setSortField] = useState<SortType>(SortType.Default);
+  const [isReversed, setIsReverse] = useState<boolean>(false);
 
   const visibleGoods = useMemo(
-    () => getPreparedGoods(goodsFromServer, sortField, handleReverse),
-    [sortField, handleReverse],
+    () => getPreparedGoods(goodsFromServer, sortField, isReversed),
+    [sortField, isReversed],
   );
   const isInitialOrder =
     visibleGoods.length === goodsFromServer.length &&
     visibleGoods.every((g, i) => g === goodsFromServer[i]);
 
   function handleReset() {
-    setSortField(SortType.Defoult);
+    setSortField(SortType.Default);
     setIsReverse(false);
   }
 
@@ -110,7 +109,7 @@ export const App: React.FC = () => {
             setIsReverse(prev => !prev);
           }}
           className={classNames('button', 'is-warning', {
-            'is-light': !handleReverse,
+            'is-light': !isReversed,
           })}
         >
           Reverse
